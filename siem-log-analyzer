@@ -1,0 +1,18 @@
+siem-log-analyzer
+│
+├── README.md
+├── requirements.txt
+├── .gitignore
+│
+├── src
+│   ├── analyzer.py
+│   ├── detector.py
+│   └── reporter.py
+│
+├── logs
+│   └── sample_auth.log
+│
+├── reports
+│
+└── tests
+    └── test_detector.py
