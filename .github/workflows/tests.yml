@@ -1,0 +1,33 @@
+
+name: SIEM Security Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Python Tests and SIEM Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Run automated tests
+        run: |
+          python -m unittest discover -s tests -v
+
+      - name: Run SIEM analyzer
+        run: |
+          python src/analyzer.py logs/sample_auth.log
+
+      - name: Validate security report
+        run: |
+          python -c "import json; r=json.load(open('reports/security_report.json')); assert r['total_alerts']==6; assert sum(a['type']=='BRUTE_FORCE' for a in r['alerts'])==2; assert all(a['window_minutes']==5 for a in r['alerts'] if a['type']=='BRUTE_FORCE'); print('SIEM report validated')"
